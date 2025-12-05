@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xe Yêu Thích - RentCar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Variables */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --bg-primary: #ffffff;
+            --text-primary: #333333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary);
+        }
+
+        nav ul li a.active {
+            color: var(--secondary);
+        }
+
+        nav ul li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--secondary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* User Avatar & Dropdown */
+        .user-avatar {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--secondary);
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 2px solid var(--secondary);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .user-avatar:hover .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown ul {
+            list-style: none;
+        }
+
+        .user-dropdown ul li {
+            margin: 0;
+        }
+
+        .user-dropdown ul li a {
+            display: block;
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+        .user-dropdown ul li a:hover {
+            background-color: var(--light);
+            color: var(--secondary);
+        }
+
+        .user-dropdown ul li.divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 0.5rem 0;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: var(--light);
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .breadcrumb ul li {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb ul li:not(:last-child)::after {
+            content: '>';
+            margin-left: 0.5rem;
+            color: #666;
+        }
+
+        .breadcrumb ul li a {
+            text-decoration: none;
+            color: var(--secondary);
+        }
+
+        .breadcrumb ul li:last-child {
+            color: #666;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* Wishlist Container */
+        .wishlist-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5% 3rem;
+        }
+
+        /* Wishlist Actions */
+        .wishlist-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .wishlist-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wishlist-count {
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sort-options label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .sort-options select {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #ddd;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #999;
+        }
+
+        .empty-state p {
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Wishlist Grid */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .wishlist-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .wishlist-card.featured {
+            border: 2px solid var(--warning);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--warning);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .wishlist-remove {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 2;
+            border: none;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .wishlist-remove:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .vehicle-img {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vehicle-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .wishlist-card:hover .vehicle-img img {
+            transform: scale(1.05);
+        }
+
+        .vehicle-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .vehicle-content {
+            padding: 1.2rem;
+        }
+
+        .vehicle-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .vehicle-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .vehicle-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-price span {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        /* Rating System */
+        .vehicle-rating {
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-stars i {
+            color: var(--warning);
+            margin-right: 2px;
+            font-size: 0.9rem;
+        }
+
+        .rating-stars span {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .rating-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge.eco-friendly {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge.popular {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge.new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Vehicle Actions */
+        .vehicle-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .vehicle-actions .btn {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .comparison-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .comparison-header h2 {
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 200px repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            overflow-x: auto;
+        }
+
+        .comparison-item {
+            min-width: 200px;
+        }
+
+        .comparison-vehicle {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-vehicle img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .comparison-vehicle h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--primary);
+        }
+
+        .comparison-vehicle .price {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .comparison-features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .feature-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .feature-name {
+            color: #666;
+            flex: 1;
+        }
+
+        .feature-value {
+            text-align: center;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .comparison-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Recommendations Section */
+        .recommendations-section {
+            margin-top: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-col ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+
+        .footer-col p {
+            color: #ddd;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: row;
+                padding: 1rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .wishlist-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sort-options {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .wishlist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .wishlist-stats {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <h1>Rent<span>Car</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="xemay.html">Thuê Xe máy</a></li>
+                    <li><a href="#">Thuê Ô tô</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" id="loginBtn">Đăng nhập</button>
+                <button class="btn btn-primary" id="registerBtn">Đăng ký</button>
+            </div>
+            
+            <!-- User Avatar (hidden by default) -->
+            <div class="user-avatar" id="userAvatar" style="display: none;">
+                <div class="avatar-placeholder" id="avatarPlaceholder">U</div>
+                <div class="user-dropdown">
+                    <ul>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Thông tin tài khoản</a></li>
+                        <li><a href="history.html"><i class="fas fa-history"></i> Lịch sử thuê xe</a></li>
+                        <li><a href="wishlist.html" class="active"><i class="fas fa-heart"></i> Xe yêu thích</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <ul>
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="profile.html">Tài khoản</a></li>
+            <li>Xe yêu thích</li>
+        </ul>
+    </div>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Xe Yêu Thích</h1>
+        <p>Quản lý danh sách những chiếc xe bạn quan tâm và muốn thuê trong tương lai</p>
+    </section>
+
+    <!-- Wishlist Container -->
+    <section class="wishlist-container">
+        <!-- Wishlist Actions -->
+        <div class="wishlist-actions">
+            <div class="wishlist-stats">
+                <div class="wishlist-count">8 xe yêu thích</div>
+                <div class="selected-count" id="selectedCount" style="display: none;">
+                    <span id="selectedNumber">0</span> xe được chọn
+                </div>
+            </div>
+            <div class="sort-options">
+                <label for="sort-wishlist">Sắp xếp:</label>
+                <select id="sort-wishlist">
+                    <option value="newest">Mới nhất</option>
+                    <option value="oldest">Cũ nhất</option>
+                    <option value="price-low">Giá thấp đến cao</option>
+                    <option value="price-high">Giá cao đến thấp</option>
+                    <option value="name">Theo tên xe</option>
+                </select>
+                <button class="btn btn-outline" id="compareBtn" style="display: none;">So sánh xe</button>
+                <button class="btn btn-danger" id="removeSelectedBtn" style="display: none;">Xóa đã chọn</button>
+            </div>
+        </div>
+
+        <!-- Wishlist Content -->
+        <div id="wishlistContent">
+            <!-- Wishlist Grid -->
+            <div class="wishlist-grid">
+                <!-- Wishlist Item 1 -->
+                <div class="wishlist-card featured">
+                    <div class="featured-badge">Đề xuất</div>
+                    <button class="wishlist-remove" onclick="removeFromWishlist(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="vehicle-img">
+                        <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Honda SH">
+                        <div class="vehicle-tag">Cao cấp</div>
+                    </div>
+                    <div class="vehicle-content">
+                        <h3>Honda SH 150i</h3>
+                        
+                        <!-- Rating System -->
+                        <div class="vehicle-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>5.0 (89 đánh giá)</span>
+                            </div>
+                            <div class="rating-badges">
+                                <span class="badge popular">🔥 Cao cấp</span>
+                                <span class="badge new">Mới</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-gas-pump"></i> Xăng</span>
+                            <span><i class="fas fa-user"></i> 2 người</span>
+                            <span><i class="fas fa-cog"></i> Tự động</span>
+                        </div>
+                        <div class="vehicle-price">250.000đ <span>/ngày</span></div>
+                        
+                        <div class="vehicle-actions">
+                            <button class="btn btn-outline" onclick="viewVehicleDetails('honda-sh')">Chi tiết</button>
+                            <button class="btn btn-primary" onclick="rentVehicle('honda-sh')">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wishlist Item 2 -->
+                <div class="wishlist-card">
+                    <button class="wishlist-remove" onclick="removeFromWishlist(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="vehicle-img">
+                        <img src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Honda Vision">
+                        <div class="vehicle-tag">Phổ biến</div>
+                    </div>
+                    <div class="vehicle-content">
+                        <h3>Honda Vision</h3>
+                        
+                        <div class="vehicle-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>4.5 (128 đánh giá)</span>
+                            </div>
+                            <div class="rating-badges">
+                                <span class="badge eco-friendly">♻️ Tiết kiệm</span>
+                                <span class="badge popular">🔥 Phổ biến</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-gas-pump"></i> Xăng</span>
+                            <span><i class="fas fa-user"></i> 2 người</span>
+                            <span><i class="fas fa-cog"></i> Tự động</span>
+                        </div>
+                        <div class="vehicle-price">150.000đ <span>/ngày</span></div>
+                        
+                        <div class="vehicle-actions">
+                            <button class="btn btn-outline" onclick="viewVehicleDetails('honda-vision')">Chi tiết</button>
+                            <button class="btn btn-primary" onclick="rentVehicle('honda-vision')">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wishlist Item 3 -->
+                <div class="wishlist-card">
+                    <button class="wishlist-remove" onclick="removeFromWishlist(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="vehicle-img">
+                        <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Yamaha Exciter">
+                        <div class="vehicle-tag">Thể thao</div>
+                    </div>
+                    <div class="vehicle-content">
+                        <h3>Yamaha Exciter 150</h3>
+                        
+                        <div class="vehicle-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>4.5 (167 đánh giá)</span>
+                            </div>
+                            <div class="rating-badges">
+                                <span class="badge popular">🔥 Thể thao</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-gas-pump"></i> Xăng</span>
+                            <span><i class="fas fa-user"></i> 2 người</span>
+                            <span><i class="fas fa-cog"></i> Số sàn</span>
+                        </div>
+                        <div class="vehicle-price">180.000đ <span>/ngày</span></div>
+                        
+                        <div class="vehicle-actions">
+                            <button class="btn btn-outline" onclick="viewVehicleDetails('yamaha-exciter')">Chi tiết</button>
+                            <button class="btn btn-primary" onclick="rentVehicle('yamaha-exciter')">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wishlist Item 4 -->
+                <div class="wishlist-card">
+                    <button class="wishlist-remove" onclick="removeFromWishlist(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="vehicle-img">
+                        <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Vinfast Klara">
+                        <div class="vehicle-tag">Tiết kiệm</div>
+                    </div>
+                    <div class="vehicle-content">
+                        <h3>Vinfast Klara S</h3>
+                        
+                        <div class="vehicle-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>4.0 (96 đánh giá)</span>
+                            </div>
+                            <div class="rating-badges">
+                                <span class="badge eco-friendly">♻️ Thân thiện MT</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-bolt"></i> Điện</span>
+                            <span><i class="fas fa-user"></i> 2 người</span>
+                            <span><i class="fas fa-cog"></i> Tự động</span>
+                        </div>
+                        <div class="vehicle-price">120.000đ <span>/ngày</span></div>
+                        
+                        <div class="vehicle-actions">
+                            <button class="btn btn-outline" onclick="viewVehicleDetails('vinfast-klara')">Chi tiết</button>
+                            <button class="btn btn-primary" onclick="rentVehicle('vinfast-klara')">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wishlist Item 5 -->
+                <div class="wishlist-card">
+                    <button class="wishlist-remove" onclick="removeFromWishlist(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="vehicle-img">
+                        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Piaggio Liberty">
+                        <div class="vehicle-tag">Phong cách</div>
+                    </div>
+                    <div class="vehicle-content">
+                        <h3>Piaggio Liberty</h3>
+                        
+                        <div class="vehicle-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>4.0 (63 đánh giá)</span>
+                            </div>
+                            <div class="rating-badges">
+                                <span class="badge popular">🔥 Phong cách</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-gas-pump"></i> Xăng</span>
+                            <span><i class="fas fa-user"></i> 2 người</span>
+                            <span><i class="fas fa-cog"></i> Tự động</span>
+                        </div>
+                        <div class="vehicle-price">200.000đ <span>/ngày</span></div>
+                        
+                        <div class="vehicle-actions">
+                            <button class="btn btn-outline" onclick="viewVehicleDetails('piaggio-liberty')">Chi tiết</button>
+                            <button class="btn btn-primary" onclick="rentVehicle('piaggio-liberty')">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Section -->
+            <div class="comparison-section" id="comparisonSection">
+                <div class="comparison-header">
+                    <h2>So Sánh Xe</h2>
+                    <button class="btn btn-outline" onclick="closeComparison()">Đóng</button>
+                </div>
+                <div class="comparison-grid" id="comparisonGrid">
+                    <!-- Comparison content will be dynamically generated -->
+                </div>
+                <div class="comparison-actions">
+                    <button class="btn btn-outline" onclick="clearComparison()">Xóa so sánh</button>
+                    <button class="btn btn-primary" onclick="rentCompared()">Thuê xe được chọn</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-heart"></i>
+            <h3>Danh sách yêu thích trống</h3>
+            <p>Bạn chưa có xe nào trong danh sách yêu thích. Hãy khám phá và thêm những chiếc xe bạn quan tâm!</p>
+            <button class="btn btn-primary" onclick="browseVehicles()">Khám phá xe ngay</button>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="recommendations-section">
+            <h2 class="section-title">Có Thể Bạn Sẽ Thích</h2>
+            <div class="recommendations-grid">
+                <!-- Recommendation items would go here -->
+                <!-- This would typically be populated dynamically based on user preferences -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Về Chúng Tôi</h3>
+                <p>RentCar cung cấp dịch vụ cho thuê xe máy, xe điện và ô tô chất lượng cao với giá cả hợp lý.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết Nhanh</h3>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="xemay.html">Xe máy</a></li>
+                    <li><a href="#">Xe điện</a></li>
+                    <li><a href="#">Ô tô</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Dịch Vụ</h3>
+                <ul>
+                    <li><a href="xemay.html">Thuê xe máy</a></li>
+                    <li><a href="#">Thuê xe điện</a></li>
+                    <li><a href="#">Thuê ô tô</a></li>
+                    <li><a href="#">Thuê xe dài hạn</a></li>
+                    <li><a href="#">Bảo hiểm xe</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Hệ</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</li>
+                    <li><i class="fas fa-phone"></i> +84 123 456 789</li>
+                    <li><i class="fas fa-envelope"></i> info@rentcar.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 RentCar. Tất cả các quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Wishlist management
+        let selectedVehicles = new Set();
+        
+        // Initialize user state (for demo purposes)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in (for demo, we'll assume they are)
+            const isLoggedIn = true;
+            
+            if (isLoggedIn) {
+                document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('userAvatar').style.display = 'block';
+            }
+            
+            // Check if wishlist is empty
+            updateEmptyState();
+        });
+        
+        // Remove vehicle from wishlist
+        function removeFromWishlist(button) {
+            const card = button.closest('.wishlist-card');
+            card.style.animation = 'fadeOut 0.3s ease';
+            
+            setTimeout(() => {
+                card.remove();
+                updateWishlistCount();
+                updateEmptyState();
+                
+                // Show confirmation message
+                showNotification('Đã xóa xe khỏi danh sách yêu thích', 'success');
+            }, 300);
+        }
+        
+        // Update wishlist count
+        function updateWishlistCount() {
+            const count = document.querySelectorAll('.wishlist-card').length;
+            document.querySelector('.wishlist-count').textContent = count + ' xe yêu thích';
+            
+            return count;
+        }
+        
+        // Update empty state visibility
+        function updateEmptyState() {
+            const count = updateWishlistCount();
+            const emptyState = document.getElementById('emptyState');
+            const wishlistContent = document.getElementById('wishlistContent');
+            
+            if (count === 0) {
+                emptyState.style.display = 'block';
+                wishlistContent.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                wishlistContent.style.display = 'block';
+            }
+        }
+        
+        // View vehicle details
+        function viewVehicleDetails(vehicleId) {
+            alert('Xem chi tiết xe: ' + vehicleId);
+            // In a real app, this would navigate to the vehicle details page
+        }
+        
+        // Rent vehicle
+        function rentVehicle(vehicleId) {
+            alert('Thuê xe: ' + vehicleId);
+            // In a real app, this would navigate to the booking page
+        }
+        
+        // Browse vehicles
+        function browseVehicles() {
+            window.location.href = 'xemay.html';
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add styles for notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                border-left: 4px solid ${type === 'success' ? 'var(--success)' : 'var(--secondary)'};
+                max-width: 350px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        // Comparison functionality
+        function toggleVehicleComparison(card) {
+            const vehicleId = card.querySelector('h3').textContent;
+            
+            if (selectedVehicles.has(vehicleId)) {
+                selectedVehicles.delete(vehicleId);
+                card.classList.remove('selected');
+            } else {
+                if (selectedVehicles.size >= 3) {
+                    showNotification('Chỉ có thể so sánh tối đa 3 xe', 'info');
+                    return;
+                }
+                selectedVehicles.add(vehicleId);
+                card.classList.add('selected');
+            }
+            
+            updateComparisonUI();
+        }
+        
+        function updateComparisonUI() {
+            const selectedCount = document.getElementById('selectedCount');
+            const selectedNumber = document.getElementById('selectedNumber');
+            const compareBtn = document.getElementById('compareBtn');
+            const removeSelectedBtn = document.getElementById('removeSelectedBtn');
+            
+            selectedNumber.textContent = selectedVehicles.size;
+            
+            if (selectedVehicles.size > 0) {
+                selectedCount.style.display = 'block';
+                compareBtn.style.display = 'inline-block';
+                removeSelectedBtn.style.display = 'inline-block';
+            } else {
+                selectedCount.style.display = 'none';
+                compareBtn.style.display = 'none';
+                removeSelectedBtn.style.display = 'none';
+            }
+        }
+        
+        function showComparison() {
+            if (selectedVehicles.size < 2) {
+                showNotification('Vui lòng chọn ít nhất 2 xe để so sánh', 'info');
+                return;
+            }
+            
+            const comparisonSection = document.getElementById('comparisonSection');
+            const comparisonGrid = document.getElementById('comparisonGrid');
+            
+            // Generate comparison content
+            comparisonGrid.innerHTML = generateComparisonContent();
+            
+            comparisonSection.classList.add('active');
+            
+            // Scroll to comparison section
+            comparisonSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function generateComparisonContent() {
+            // This would typically fetch detailed vehicle data from an API
+            // For demo purposes, we'll use static data
+            
+            const features = [
+                { name: 'Giá thuê/ngày', key: 'price' },
+                { name: 'Loại nhiên liệu', key: 'fuel' },
+                { name: 'Số chỗ ngồi', key: 'seats' },
+                { name: 'Hộp số', key: 'transmission' },
+                { name: 'Phân khối', key: 'engine' },
+                { name: 'Đánh giá', key: 'rating' },
+                { name: 'Tiện ích', key: 'features' }
+            ];
+            
+            const vehiclesData = {
+                'Honda SH 150i': {
+                    price: '250.000đ',
+                    fuel: 'Xăng',
+                    seats: '2',
+                    transmission: 'Tự động',
+                    engine: '150cc',
+                    rating: '5.0 (89 đánh giá)',
+                    features: 'ABS, Khóa thông minh, LED'
+                },
+                'Honda Vision': {
+                    price: '150.000đ',
+                    fuel: 'Xăng',
+                    seats: '2',
+                    transmission: 'Tự động',
+                    engine: '110cc',
+                    rating: '4.5 (128 đánh giá)',
+                    features: 'Tiết kiệm nhiên liệu, Cốp rộng'
+                },
+                'Yamaha Exciter 150': {
+                    price: '180.000đ',
+                    fuel: 'Xăng',
+                    seats: '2',
+                    transmission: 'Số sàn',
+                    engine: '150cc',
+                    rating: '4.5 (167 đánh giá)',
+                    features: 'Thể thao, Phanh đĩa'
+                }
+            };
+            
+            let html = '<div class="comparison-item"><div class="feature-name"></div></div>';
+            
+            // Add vehicle columns
+            Array.from(selectedVehicles).forEach(vehicleName => {
+                const vehicle = vehiclesData[vehicleName] || {};
+                html += `
+                    <div class="comparison-item">
+                        <div class="comparison-vehicle">
+                            <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="${vehicleName}">
+                            <h4>${vehicleName}</h4>
+                            <div class="price">${vehicle.price}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Add feature rows
+            features.forEach(feature => {
+                html += `<div class="comparison-item"><div class="feature-name">${feature.name}</div></div>`;
+                
+                Array.from(selectedVehicles).forEach(vehicleName => {
+                    const vehicle = vehiclesData[vehicleName] || {};
+                    html += `
+                        <div class="comparison-item">
+                            <div class="feature-value">${vehicle[feature.key] || '—'}</div>
+                        </div>
+                    `;
+                });
+            });
+            
+            return html;
+        }
+        
+        function closeComparison() {
+            document.getElementById('comparisonSection').classList.remove('active');
+        }
+        
+        function clearComparison() {
+            selectedVehicles.clear();
+            document.querySelectorAll('.wishlist-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            updateComparisonUI();
+            closeComparison();
+        }
+        
+        function rentCompared() {
+            alert('Thuê các xe đã chọn trong so sánh');
+            // In a real app, this would navigate to a multi-booking page
+        }
+        
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(20px); }
+            }
+            
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            .wishlist-card.selected {
+                border: 2px solid var(--secondary);
+            }
+            
+            .notification-close {
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #666;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize comparison buttons
+        document.getElementById('compareBtn').addEventListener('click', showComparison);
+    </script>
+</body>
+</html>

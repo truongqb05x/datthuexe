@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Quả Tìm Kiếm - RentCar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Variables */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --bg-primary: #ffffff;
+            --text-primary: #333333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary);
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary);
+        }
+
+        /* User Avatar & Dropdown */
+        .user-avatar {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--secondary);
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 2px solid var(--secondary);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 200px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .user-avatar:hover .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown ul {
+            list-style: none;
+        }
+
+        .user-dropdown ul li {
+            margin: 0;
+        }
+
+        .user-dropdown ul li a {
+            display: block;
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+        .user-dropdown ul li a:hover {
+            background-color: var(--light);
+            color: var(--secondary);
+        }
+
+        .user-dropdown ul li.divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 0.5rem 0;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            padding: 1rem;
+        }
+
+        .mobile-menu ul li {
+            margin: 0.5rem 0;
+        }
+
+        .mobile-menu ul li a {
+            display: block;
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            color: var(--dark);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .mobile-menu ul li a:hover {
+            background: var(--light);
+        }
+
+        /* Search Results Header */
+        .search-results-header {
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 2rem 5%;
+        }
+
+        .search-results-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-results-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-results-title h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-results-title p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-criteria {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-criteria h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .criteria-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .criteria-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .modify-search {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Search Results Content */
+        .search-results-content {
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .results-count span {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-options label {
+            font-weight: 500;
+        }
+
+        .sort-options select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Results Layout */
+        .results-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .filter-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-section h3 button {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+        }
+
+        .price-range {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .price-inputs input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .apply-filters {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-image {
+            width: 250px;
+            height: 200px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .result-card:hover .result-image img {
+            transform: scale(1.05);
+        }
+
+        .result-content {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .result-title h3 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .result-tag {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .result-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+
+        .rating-stars i {
+            color: var(--warning);
+            margin-right: 2px;
+            font-size: 0.9rem;
+        }
+
+        .rating-stars span {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .result-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .result-price span {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: auto;
+        }
+
+        .result-actions .btn {
+            flex: 1;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination button:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .pagination button.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-results p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-col ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+
+        .footer-col p {
+            color: #ddd;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .results-layout {
+                grid-template-columns: 250px 1fr;
+            }
+            
+            .result-card {
+                flex-direction: column;
+            }
+            
+            .result-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: row;
+                padding: 1rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+
+            .results-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 1.5rem;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-results-header {
+                padding: 1.5rem 5%;
+            }
+            
+            .search-results-title h1 {
+                font-size: 1.5rem;
+            }
+            
+            .criteria-list {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                <h1>Rent<span>Car</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="#" class="active">Kết quả tìm kiếm</a></li>
+                    <li><a href="#">Thuê Xe máy</a></li>
+                    <li><a href="#">Thuê Ô tô</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" id="loginBtn">Đăng nhập</button>
+                <button class="btn btn-primary" id="registerBtn">Đăng ký</button>
+            </div>
+            
+            <!-- User Avatar (hidden by default) -->
+            <div class="user-avatar" id="userAvatar" style="display: none;">
+                <div class="avatar-placeholder" id="avatarPlaceholder">U</div>
+                <div class="user-dropdown">
+                    <ul>
+                        <li><a href="#"><i class="fas fa-user"></i> Thông tin tài khoản</a></li>
+                        <li><a href="#"><i class="fas fa-history"></i> Lịch sử thuê xe</a></li>
+                        <li><a href="#"><i class="fas fa-heart"></i> Xe yêu thích</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="#" class="active">Kết quả tìm kiếm</a></li>
+                <li><a href="#">Xe máy</a></li>
+                <li><a href="#">Xe điện</a></li>
+                <li><a href="#">Ô tô</a></li>
+                <li>
+                    <div class="auth-buttons-mobile" id="authButtonsMobile">
+                        <button class="btn btn-outline" id="loginBtnMobile" style="width: 100%; margin-bottom: 0.5rem;">Đăng nhập</button>
+                        <button class="btn btn-primary" id="registerBtnMobile" style="width: 100%;">Đăng ký</button>
+                    </div>
+                    <div class="user-avatar-mobile" id="userAvatarMobile" style="display: none;">
+                        <div class="avatar-placeholder">U</div>
+                        <div class="user-info">
+                            <p>Xin chào, <span id="mobileUserName">Người dùng</span></p>
+                            <a href="#" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;" id="logoutBtnMobile">Đăng xuất</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Search Results Header -->
+    <section class="search-results-header">
+        <div class="search-results-container">
+            <div class="search-results-title">
+                <h1>Kết Quả Tìm Kiếm</h1>
+                <p>Tìm thấy các phương tiện phù hợp với yêu cầu của bạn</p>
+            </div>
+            
+            <div class="search-criteria">
+                <h3>Tiêu chí tìm kiếm của bạn:</h3>
+                <div class="criteria-list">
+                    <div class="criteria-item">Loại xe: Xe máy</div>
+                    <div class="criteria-item">Ngày nhận: 15/11/2023</div>
+                    <div class="criteria-item">Ngày trả: 20/11/2023</div>
+                    <div class="criteria-item">Địa điểm: Hồ Chí Minh</div>
+                </div>
+            </div>
+            
+            <div class="modify-search">
+                <button class="btn btn-outline">
+                    <i class="fas fa-edit"></i> Sửa tìm kiếm
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results Content -->
+    <section class="search-results-content">
+        <div class="results-header">
+            <div class="results-count">
+                Tìm thấy <span>12</span> kết quả phù hợp
+            </div>
+            <div class="sort-options">
+                <label for="sort-by">Sắp xếp theo:</label>
+                <select id="sort-by">
+                    <option value="popular">Phổ biến nhất</option>
+                    <option value="price-low">Giá thấp đến cao</option>
+                    <option value="price-high">Giá cao đến thấp</option>
+                    <option value="rating">Đánh giá cao nhất</option>
+                    <option value="newest">Mới nhất</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="results-layout">
+            <!-- Filters Sidebar -->
+            <div class="filters-sidebar">
+                <div class="filter-section">
+                    <h3>Bộ lọc <button class="btn-reset">Đặt lại</button></h3>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Loại xe</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="type-motorcycle" checked>
+                            <label for="type-motorcycle">Xe máy</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="type-electric">
+                            <label for="type-electric">Xe điện</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="type-car">
+                            <label for="type-car">Ô tô</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Giá thuê / ngày</h3>
+                    <div class="price-range">
+                        <div class="price-inputs">
+                            <input type="number" placeholder="Từ" value="100000">
+                            <input type="number" placeholder="Đến" value="300000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Hãng xe</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="brand-honda" checked>
+                            <label for="brand-honda">Honda</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="brand-yamaha" checked>
+                            <label for="brand-yamaha">Yamaha</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="brand-suzuki">
+                            <label for="brand-suzuki">Suzuki</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="brand-vespa">
+                            <label for="brand-vespa">Vespa</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Truyền động</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="trans-auto" checked>
+                            <label for="trans-auto">Tự động</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="trans-manual">
+                            <label for="trans-manual">Số sàn</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Nhiên liệu</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="fuel-petrol" checked>
+                            <label for="fuel-petrol">Xăng</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="fuel-electric">
+                            <label for="fuel-electric">Điện</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary apply-filters">Áp dụng bộ lọc</button>
+            </div>
+            
+            <!-- Results Grid -->
+            <div class="results-grid">
+                <!-- Result Card 1 -->
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Honda Vision">
+                    </div>
+                    <div class="result-content">
+                        <div class="result-header">
+                            <div class="result-title">
+                                <h3>Honda Vision 2023</h3>
+                                <div class="result-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <span>4.5 (128 đánh giá)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-tag">Phổ biến</div>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Xăng</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>2 người</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Tự động</span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-price">
+                            150.000đ <span>/ngày</span>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button class="btn btn-outline">Xem chi tiết</button>
+                            <button class="btn btn-primary">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Result Card 2 -->
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Yamaha Exciter">
+                    </div>
+                    <div class="result-content">
+                        <div class="result-header">
+                            <div class="result-title">
+                                <h3>Yamaha Exciter 150</h3>
+                                <div class="result-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <span>4.5 (167 đánh giá)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-tag">Thể thao</div>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Xăng</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>2 người</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Số sàn</span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-price">
+                            180.000đ <span>/ngày</span>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button class="btn btn-outline">Xem chi tiết</button>
+                            <button class="btn btn-primary">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Result Card 3 -->
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Honda Air Blade">
+                    </div>
+                    <div class="result-content">
+                        <div class="result-header">
+                            <div class="result-title">
+                                <h3>Honda Air Blade 150</h3>
+                                <div class="result-rating">
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                        <span>4.0 (98 đánh giá)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-tag">Tiết kiệm</div>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Xăng</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>2 người</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Tự động</span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-price">
+                            160.000đ <span>/ngày</span>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button class="btn btn-outline">Xem chi tiết</button>
+                            <button class="btn btn-primary">Thuê ngay</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add more result cards as needed -->
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <button>Tiếp theo</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Về Chúng Tôi</h3>
+                <p>RentCar cung cấp dịch vụ cho thuê xe máy, xe điện và ô tô chất lượng cao với giá cả hợp lý.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết Nhanh</h3>
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Dịch vụ</a></li>
+                    <li><a href="#">Xe nổi bật</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Dịch Vụ</h3>
+                <ul>
+                    <li><a href="#">Thuê xe máy</a></li>
+                    <li><a href="#">Thuê xe điện</a></li>
+                    <li><a href="#">Thuê ô tô</a></li>
+                    <li><a href="#">Thuê xe dài hạn</a></li>
+                    <li><a href="#">Bảo hiểm xe</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Hệ</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</li>
+                    <li><i class="fas fa-phone"></i> +84 123 456 789</li>
+                    <li><i class="fas fa-envelope"></i> info@rentcar.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 RentCar. Tất cả các quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Auth Modal Functionality (giữ nguyên từ trang index)
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginBtnMobile = document.getElementById('loginBtnMobile');
+        const registerBtnMobile = document.getElementById('registerBtnMobile');
+        const authButtons = document.getElementById('authButtons');
+        const userAvatar = document.getElementById('userAvatar');
+        const authButtonsMobile = document.getElementById('authButtonsMobile');
+        const userAvatarMobile = document.getElementById('userAvatarMobile');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+
+        // Check if user is logged in (for demo purposes)
+        let isLoggedIn = false;
+        let currentUser = null;
+
+        // Update UI after login
+        function updateUIAfterLogin() {
+            if (isLoggedIn && currentUser) {
+                // Update avatar placeholder with first letter of name
+                avatarPlaceholder.textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                // Show user avatar, hide auth buttons
+                userAvatar.style.display = 'block';
+                authButtons.style.display = 'none';
+                
+                // Update mobile menu
+                userAvatarMobile.style.display = 'block';
+                authButtonsMobile.style.display = 'none';
+                document.getElementById('mobileUserName').textContent = currentUser.name;
+            }
+        }
+
+        // Logout functionality
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            
+            // Show auth buttons, hide user avatar
+            userAvatar.style.display = 'none';
+            authButtons.style.display = 'flex';
+            
+            // Update mobile menu
+            userAvatarMobile.style.display = 'none';
+            authButtonsMobile.style.display = 'block';
+            
+            alert('Đã đăng xuất thành công!');
+        }
+
+        // For demo purposes, simulate a logged in user
+        // Comment out the following lines to start with logged out state
+        /*
+        currentUser = {
+            name: 'Người dùng',
+            email: 'user@example.com'
+        };
+        isLoggedIn = true;
+        updateUIAfterLogin();
+        */
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+
+        logoutBtnMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+
+        // Filter functionality
+        const applyFiltersBtn = document.querySelector('.apply-filters');
+        const resetFiltersBtn = document.querySelector('.btn-reset');
+        
+        applyFiltersBtn.addEventListener('click', () => {
+            // In a real application, this would update the search results
+            alert('Bộ lọc đã được áp dụng!');
+        });
+        
+        resetFiltersBtn.addEventListener('click', () => {
+            // Reset all checkboxes
+            document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset price inputs
+            document.querySelectorAll('.price-inputs input').forEach((input, index) => {
+                input.value = index === 0 ? '100000' : '300000';
+            });
+            
+            alert('Bộ lọc đã được đặt lại!');
+        });
+
+        // Sort functionality
+        const sortSelect = document.getElementById('sort-by');
+        
+        sortSelect.addEventListener('change', () => {
+            // In a real application, this would re-sort the search results
+            alert(`Đã sắp xếp theo: ${sortSelect.options[sortSelect.selectedIndex].text}`);
+        });
+
+        // Pagination functionality
+        document.querySelectorAll('.pagination button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.textContent !== 'Tiếp theo') {
+                    document.querySelector('.pagination button.active').classList.remove('active');
+                    this.classList.add('active');
+                }
+                // In a real application, this would load the corresponding page
+                alert(`Đang tải trang ${this.textContent}`);
+            });
+        });
+    </script>
+</body>
+</html>
