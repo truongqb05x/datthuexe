@@ -979,22 +979,229 @@
     <script>
         // Initialize data
         const dashboardData = {
-            // Revenue data for chart
-            monthlyRevenue: [32.5, 35.2, 38.7, 40.1, 39.8, 42.5, 45.2, 44.8, 47.3, 46.5, 48.2, 50.5], // 12 months in millions
-            quarterlyRevenue: [106.4, 124.3, 142.1, 155.2], // 4 quarters in millions
-            yearlyRevenue: [2019: 380.5, 2020: 410.2, 2021: 485.7, 2022: 520.3, 2023: 580.1], // Last 5 years in millions
+    // Revenue data for chart
+    monthlyRevenue: [32.5, 35.2, 38.7, 40.1, 39.8, 42.5, 45.2, 44.8, 47.3, 46.5, 48.2, 50.5], // 12 months in millions
+    quarterlyRevenue: [106.4, 124.3, 142.1, 155.2], // 4 quarters in millions
+    
+    // ✅ Sửa cấu trúc yearlyRevenue
+    yearlyRevenue: {
+        2019: 380.5,
+        2020: 410.2,
+        2021: 485.7,
+        2022: 520.3,
+        2023: 580.1
+    },
+
+    // Recent bookings
+    recentBookings: [
+        {id: 'RENT20230045', customer: 'Nguyễn Văn A', vehicle: 'Toyota Vios', days: '15-20/12/2023', amount: '3.750.000', status: 'confirmed'},
+        {id: 'RENT20230044', customer: 'Trần Thị B', vehicle: 'Honda Vision', days: '12-15/12/2023', amount: '600.000', status: 'completed'},
+        {id: 'RENT20230043', customer: 'Lê Văn C', vehicle: 'Yamaha Exciter', days: '10-12/12/2023', amount: '480.000', status: 'pending'},
+        {id: 'RENT20230042', customer: 'Phạm Thị D', vehicle: 'Vinfast Klara', days: '05-10/12/2023', amount: '800.000', status: 'cancelled'},
+        {id: 'RENT20230041', customer: 'Hoàng Văn E', vehicle: 'Toyota Vios', days: '01-05/12/2023', amount: '3.000.000', status: 'completed'}
+    ],
+
+    // Popular vehicles
+    popularVehicles: [
+        {name: 'Toyota Vios', plate: '51A-12345', rentals: 28, revenue: '42.5M', rating: 4.8, reviews: 156, status: 'active'},
+        {name: 'Honda Vision', plate: '51B-67890', rentals: 45, revenue: '18.9M', rating: 4.5, reviews: 128, status: 'active'},
+        {name: 'Yamaha Exciter', plate: '51C-11223', rentals: 32, revenue: '15.2M', rating: 4.7, reviews: 167, status: 'active'},
+        {name: 'Vinfast Klara', plate: '51D-44556', rentals: 19, revenue: '7.6M', rating: 4.0, reviews: 96, status: 'maintenance'},
+        {name: 'Honda Wave', plate: '51E-77889', rentals: 38, revenue: '16.3M', rating: 4.3, reviews: 205, status: 'active'}
+    ],
+
+    // Recent activities
+    recentActivities: [
+        {type: 'booking', title: 'Đơn đặt mới #RENT20230045', details: 'Nguyễn Văn A - Toyota Vios', time: '10 phút trước'},
+        {type: 'payment', title: 'Thanh toán thành công', details: 'Trần Thị B - 2.150.000 ₫', time: '1 giờ trước'},
+        {type: 'review', title: 'Đánh giá mới 5 sao', details: 'Lê Văn C - Honda Vision', time: '2 giờ trước'},
+        {type: 'booking', title: 'Đơn đặt hoàn thành', details: '#RENT20230039 - 3 ngày thuê', time: '3 giờ trước'},
+        {type: 'user', title: 'Người dùng mới đăng ký', details: 'phamthid@gmail.com', time: '5 giờ trước'}
+    ]
+};
+
+        // DOM Elements
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        const chartBtns = document.querySelectorAll('.chart-btn');
+        const currentDateTime = document.getElementById('currentDateTime');
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Dropdown toggle
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = toggle.getAttribute('data-target');
+                const dropdown = document.getElementById(targetId);
+                
+                toggle.classList.toggle('collapsed');
+                dropdown.classList.toggle('show');
+            });
+        });
+
+        // Chart initialization
+        let revenueChart;
+        
+        function initChart(chartType = 'monthly') {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
             
-            // Recent bookings
-            recentBookings: [
-                {id: 'RENT20230045', customer: 'Nguyễn Văn A', vehicle: 'Toyota Vios', days: '15-20/12/2023', amount: '3.750.000', status: 'confirmed'},
-                {id: 'RENT20230044', customer: 'Trần Thị B', vehicle: 'Honda Vision', days: '12-15/12/2023', amount: '600.000', status: 'completed'},
-                {id: 'RENT20230043', customer: 'Lê Văn C', vehicle: 'Yamaha Exciter', days: '10-12/12/2023', amount: '480.000', status: 'pending'},
-                {id: 'RENT20230042', customer: 'Phạm Thị D', vehicle: 'Vinfast Klara', days: '05-10/12/2023', amount: '800.000', status: 'cancelled'},
-                {id: 'RENT20230041', customer: 'Hoàng Văn E', vehicle: 'Toyota Vios', days: '01-05/12/2023', amount: '3.000.000', status: 'completed'}
-            ],
+            // Destroy existing chart
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
             
-            // Popular vehicles
-            popularVehicles: [
-                {name: 'Toyota Vios', plate: '51A-12345', rentals: 28, revenue: '42.5M', rating: 4.8, reviews: 156, status: 'active'},
-                {name: 'Honda Vision', plate: '51B-67890', rentals: 45, revenue: '18.9M', rating: 4.5, reviews: 128, status: 'active'},
-                {name: 'Yamaha Exciter', plate: '51C-11223', rentals: 32, revenue
+            let labels, data, label;
+            
+            switch(chartType) {
+                case 'monthly':
+                    labels = ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'];
+                    data = dashboardData.monthlyRevenue;
+                    label = 'Doanh thu theo tháng (triệu VNĐ)';
+                    break;
+                case 'quarterly':
+                    labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                    data = dashboardData.quarterlyRevenue;
+                    label = 'Doanh thu theo quý (triệu VNĐ)';
+                    break;
+                case 'yearly':
+                    labels = ['2019', '2020', '2021', '2022', '2023'];
+                    data = Object.values(dashboardData.yearlyRevenue);
+                    label = 'Doanh thu theo năm (triệu VNĐ)';
+                    break;
+            }
+            
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderColor: '#3498db',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart type switcher
+        chartBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                chartBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                initChart(btn.getAttribute('data-chart'));
+            });
+        });
+
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            currentDateTime.textContent = now.toLocaleDateString('vi-VN', options);
+        }
+
+        // Simulate real-time updates
+        function simulateRealTimeUpdates() {
+            // Update stats every 30 seconds
+            setInterval(() => {
+                const statValues = document.querySelectorAll('.stat-value');
+                
+                // Randomly update booking count
+                const bookingStat = statValues[1];
+                let currentBookings = parseInt(bookingStat.textContent);
+                if (Math.random() > 0.7) { // 30% chance to add a booking
+                    currentBookings += 1;
+                    bookingStat.textContent = currentBookings;
+                    
+                    // Add notification
+                    const notificationBadge = document.querySelector('.notification-badge');
+                    let currentNotif = parseInt(notificationBadge.textContent);
+                    notificationBadge.textContent = currentNotif + 1;
+                }
+                
+                // Update revenue slightly
+                const revenueStat = statValues[0];
+                let currentRevenue = parseFloat(revenueStat.textContent);
+                if (Math.random() > 0.5) { // 50% chance to increase revenue
+                    const increase = Math.random() * 0.5 + 0.1; // 0.1-0.6M increase
+                    currentRevenue = Math.round((currentRevenue + increase) * 10) / 10;
+                    revenueStat.textContent = currentRevenue.toFixed(1) + 'M ₫';
+                }
+            }, 30000);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize chart
+            initChart();
+            
+            // Update date/time
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Start real-time simulation
+            simulateRealTimeUpdates();
+            
+            // Add click event to notification bell
+            document.querySelector('.notification').addEventListener('click', () => {
+                alert('Bạn có 5 thông báo chưa đọc:\n\n1. Đơn đặt mới #RENT20230045\n2. Thanh toán thành công 2.150.000 ₫\n3. Đánh giá mới 5 sao\n4. Người dùng mới đăng ký\n5. Xe Vinfast Klara cần bảo trì');
+                document.querySelector('.notification-badge').textContent = '0';
+            });
+            
+            // Add click events to view buttons
+            document.querySelectorAll('.btn-view').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const row = e.target.closest('tr');
+                    const bookingId = row.cells[0].textContent;
+                    alert(`Xem chi tiết đơn đặt: ${bookingId}\n\nChức năng này sẽ chuyển đến trang chi tiết đơn đặt.`);
+                });
+            });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
