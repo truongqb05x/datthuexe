@@ -513,7 +513,200 @@
             gap: 1rem;
         }
 
-        /* Modal Styles */
+        /* Modal Styles (cho xem chi tiết xe) */
+        .vehicle-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .vehicle-modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .vehicle-modal-content {
+            background: white;
+            margin: 2rem auto;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-vehicle-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            z-index: 10;
+        }
+
+        .close-vehicle-modal:hover {
+            color: var(--accent);
+        }
+
+        .vehicle-modal-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .vehicle-modal-header h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .vehicle-modal-body {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .vehicle-gallery {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-main-image {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+        }
+
+        .vehicle-main-image img, .vehicle-main-image video {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .vehicle-thumbnail {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .vehicle-thumbnail:hover {
+            transform: scale(1.05);
+        }
+
+        .vehicle-details-modal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-detail-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        .vehicle-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .vehicle-spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .vehicle-spec-label {
+            color: #666;
+        }
+
+        .vehicle-spec-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .vehicle-pricing-section {
+            background: #f8f9fa;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-price-breakdown {
+            margin: 1rem 0;
+        }
+
+        .vehicle-price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .vehicle-price-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--secondary);
+        }
+
+        .vehicle-modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Rating System trong modal xe */
+        .vehicle-rating {
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-stars i {
+            color: var(--warning);
+            margin-right: 2px;
+            font-size: 0.9rem;
+        }
+
+        .rating-stars span {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Rating Modal */
         .modal {
             display: none;
             position: fixed;
@@ -539,11 +732,6 @@
             max-width: 600px;
             position: relative;
             animation: modalFadeIn 0.3s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-header {
@@ -585,27 +773,38 @@
             padding: 1rem 0;
         }
 
-        .rating-stars {
+        .rating-stars-input {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
             margin: 1rem 0;
         }
 
-        .rating-star {
+        .rating-star-input {
             font-size: 2rem;
             color: #ddd;
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .rating-star:hover, .rating-star.active {
+        .rating-star-input:hover, .rating-star-input.active {
             color: var(--warning);
         }
 
         .rating-text {
             color: #666;
             margin-bottom: 1rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-sizing: border-box;
+            margin-top: 0.5rem;
         }
 
         /* Footer */
@@ -742,6 +941,18 @@
             .history-tab {
                 flex: 1;
                 text-align: center;
+            }
+
+            .vehicle-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-details-modal {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-modal-actions {
+                flex-direction: column;
             }
         }
 
@@ -912,7 +1123,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230015')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('honda-sh', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="cancelBooking('RC20230015')">Hủy đặt xe</button>
                         <button class="btn btn-primary" onclick="modifyBooking('RC20230015')">Chỉnh sửa</button>
                     </div>
@@ -951,7 +1162,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230014')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('honda-vision', this)">Xem chi tiết xe</button>
                         <button class="btn btn-primary" onclick="extendBooking('RC20230014')">Gia hạn</button>
                         <button class="btn btn-primary" onclick="contactSupport()">Liên hệ hỗ trợ</button>
                     </div>
@@ -990,7 +1201,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230012')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('yamaha-exciter', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="downloadInvoice('RC20230012')">Tải hóa đơn</button>
                         <button class="btn btn-primary" onclick="rateBooking('RC20230012')">Đánh giá</button>
                     </div>
@@ -1029,7 +1240,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230010')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('vinfast-klara', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="downloadInvoice('RC20230010')">Tải hóa đơn</button>
                         <button class="btn btn-primary" onclick="rebookVehicle('RC20230010')">Thuê lại</button>
                     </div>
@@ -1073,7 +1284,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230015')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('honda-sh', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="cancelBooking('RC20230015')">Hủy đặt xe</button>
                         <button class="btn btn-primary" onclick="modifyBooking('RC20230015')">Chỉnh sửa</button>
                     </div>
@@ -1112,7 +1323,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230016')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('piaggio-liberty', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="cancelBooking('RC20230016')">Hủy đặt xe</button>
                         <button class="btn btn-primary" onclick="modifyBooking('RC20230016')">Chỉnh sửa</button>
                     </div>
@@ -1156,7 +1367,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230014')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('honda-vision', this)">Xem chi tiết xe</button>
                         <button class="btn btn-primary" onclick="extendBooking('RC20230014')">Gia hạn</button>
                         <button class="btn btn-primary" onclick="contactSupport()">Liên hệ hỗ trợ</button>
                     </div>
@@ -1200,7 +1411,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230012')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('yamaha-exciter', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="downloadInvoice('RC20230012')">Tải hóa đơn</button>
                         <button class="btn btn-primary" onclick="rateBooking('RC20230012')">Đánh giá</button>
                     </div>
@@ -1239,7 +1450,7 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230010')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('vinfast-klara', this)">Xem chi tiết xe</button>
                         <button class="btn btn-outline" onclick="downloadInvoice('RC20230010')">Tải hóa đơn</button>
                         <button class="btn btn-primary" onclick="rebookVehicle('RC20230010')">Thuê lại</button>
                     </div>
@@ -1283,13 +1494,136 @@
                         </div>
                     </div>
                     <div class="booking-actions">
-                        <button class="btn btn-outline" onclick="viewDetails('RC20230008')">Xem chi tiết</button>
+                        <button class="btn btn-outline" onclick="openVehicleModal('honda-wave', this)">Xem chi tiết xe</button>
                         <button class="btn btn-primary" onclick="rebookVehicle('RC20230008')">Đặt lại</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Vehicle Detail Modal (Tương tự trang index.html) -->
+    <div class="vehicle-modal" id="vehicleModal">
+        <div class="vehicle-modal-content">
+            <button class="close-vehicle-modal" id="closeVehicleModal">&times;</button>
+            <div class="vehicle-modal-header">
+                <h2 id="modalVehicleName">Honda Vision 2023</h2>
+                <div class="vehicle-rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.5 (128 đánh giá)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="vehicle-modal-body">
+                <div class="vehicle-gallery">
+                    <div class="vehicle-main-image">
+                        <img id="vehicleMainImage" src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Xe chính">
+                    </div>
+                    <div class="thumbnail-container">
+                        <img class="vehicle-thumbnail" src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Hình 1" onclick="changeMainImage(this.src)">
+                        <img class="vehicle-thumbnail" src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Hình 2" onclick="changeMainImage(this.src)">
+                        <img class="vehicle-thumbnail" src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Hình 3" onclick="changeMainImage(this.src)">
+                        <video class="vehicle-thumbnail" onclick="playVideo(this)" poster="https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-white-sedan-on-a-road-34546-large.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <div class="vehicle-details-modal">
+                    <div class="vehicle-detail-section">
+                        <h3>Thông số kỹ thuật</h3>
+                        <div class="vehicle-specs-grid">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Loại xe:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecType">Xe máy</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Nhiên liệu:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecFuel">Xăng</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Số chỗ:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecSeats">2 người</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Hộp số:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecGear">Tự động</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Động cơ:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecEngine">110cc</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Màu sắc:</span>
+                                <span class="vehicle-spec-value" id="vehicleSpecColor">Đen, Trắng, Xanh</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-detail-section">
+                        <h3>Tiện nghi & An toàn</h3>
+                        <div class="vehicle-specs-grid">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Điều hòa:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Camera lùi:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Cảm biến va chạm:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Bluetooth:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">GPS:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-label">Camera hành trình:</span>
+                                <span class="vehicle-spec-value">✓ Có</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vehicle-pricing-section">
+                    <h3>Bảng giá & Điều khoản</h3>
+                    <div class="vehicle-price-breakdown">
+                        <div class="vehicle-price-item">
+                            <span>Giá thuê cơ bản (1 ngày):</span>
+                            <span id="vehicleBasePrice">150.000đ</span>
+                        </div>
+                        <div class="vehicle-price-item">
+                            <span>Phí bảo hiểm:</span>
+                            <span id="vehicleInsuranceFee">30.000đ</span>
+                        </div>
+                        <div class="vehicle-price-item">
+                            <span>Phí dịch vụ:</span>
+                            <span id="vehicleServiceFee">20.000đ</span>
+                        </div>
+                        <div class="vehicle-price-total">
+                            Tổng cộng: <span id="vehicleTotalPrice">200.000đ</span> / ngày
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-modal-actions">
+                        <button class="btn btn-outline">Thêm vào yêu thích</button>
+                        <button class="btn btn-primary">Thuê lại</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Rating Modal -->
     <div class="modal" id="ratingModal">
@@ -1301,12 +1635,12 @@
             <div class="modal-body">
                 <div class="rating-section">
                     <p class="rating-text">Bạn hài lòng như thế nào với dịch vụ thuê xe?</p>
-                    <div class="rating-stars">
-                        <i class="fas fa-star rating-star" data-rating="1"></i>
-                        <i class="fas fa-star rating-star" data-rating="2"></i>
-                        <i class="fas fa-star rating-star" data-rating="3"></i>
-                        <i class="fas fa-star rating-star" data-rating="4"></i>
-                        <i class="fas fa-star rating-star" data-rating="5"></i>
+                    <div class="rating-stars-input">
+                        <i class="fas fa-star rating-star-input" data-rating="1"></i>
+                        <i class="fas fa-star rating-star-input" data-rating="2"></i>
+                        <i class="fas fa-star rating-star-input" data-rating="3"></i>
+                        <i class="fas fa-star rating-star-input" data-rating="4"></i>
+                        <i class="fas fa-star rating-star-input" data-rating="5"></i>
                     </div>
                     <div class="form-group">
                         <label for="reviewComment">Nhận xét của bạn (tùy chọn)</label>
@@ -1389,6 +1723,155 @@
             event.target.classList.add('active');
         }
         
+        // Vehicle Modal Functions
+        const vehicleModal = document.getElementById('vehicleModal');
+        const closeVehicleModal = document.getElementById('closeVehicleModal');
+        
+        function openVehicleModal(vehicleId, element) {
+            // Hiển thị loading trong modal
+            vehicleModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Giả lập loading 2 giây
+            setTimeout(() => {
+                // Cập nhật thông tin xe dựa trên vehicleId
+                updateModalContent(vehicleId);
+            }, 500);
+        }
+        
+        function updateModalContent(vehicleId) {
+            const vehicleData = {
+                'honda-sh': {
+                    name: 'Honda SH 150i 2023',
+                    type: 'Xe máy',
+                    fuel: 'Xăng',
+                    seats: '2 người',
+                    gear: 'Tự động',
+                    engine: '150cc',
+                    color: 'Đen, Trắng, Xám',
+                    basePrice: '330.000đ',
+                    insuranceFee: '60.000đ',
+                    serviceFee: '50.000đ',
+                    totalPrice: '440.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                },
+                'honda-vision': {
+                    name: 'Honda Vision 2023',
+                    type: 'Xe máy',
+                    fuel: 'Xăng',
+                    seats: '2 người',
+                    gear: 'Tự động',
+                    engine: '110cc',
+                    color: 'Đen, Trắng, Xanh',
+                    basePrice: '150.000đ',
+                    insuranceFee: '30.000đ',
+                    serviceFee: '20.000đ',
+                    totalPrice: '200.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80'
+                },
+                'yamaha-exciter': {
+                    name: 'Yamaha Exciter 150',
+                    type: 'Xe máy',
+                    fuel: 'Xăng',
+                    seats: '2 người',
+                    gear: 'Số sàn',
+                    engine: '150cc',
+                    color: 'Xanh, Đỏ, Đen',
+                    basePrice: '180.000đ',
+                    insuranceFee: '35.000đ',
+                    serviceFee: '25.000đ',
+                    totalPrice: '240.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                },
+                'vinfast-klara': {
+                    name: 'Vinfast Klara S',
+                    type: 'Xe điện',
+                    fuel: 'Điện',
+                    seats: '2 người',
+                    gear: 'Tự động',
+                    engine: '1.2kW',
+                    color: 'Trắng, Đỏ, Xanh',
+                    basePrice: '120.000đ',
+                    insuranceFee: '25.000đ',
+                    serviceFee: '15.000đ',
+                    totalPrice: '160.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                },
+                'piaggio-liberty': {
+                    name: 'Piaggio Liberty',
+                    type: 'Xe máy',
+                    fuel: 'Xăng',
+                    seats: '2 người',
+                    gear: 'Tự động',
+                    engine: '125cc',
+                    color: 'Trắng, Đỏ, Xanh',
+                    basePrice: '200.000đ',
+                    insuranceFee: '40.000đ',
+                    serviceFee: '30.000đ',
+                    totalPrice: '270.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                },
+                'honda-wave': {
+                    name: 'Honda Wave RSX',
+                    type: 'Xe máy',
+                    fuel: 'Xăng',
+                    seats: '2 người',
+                    gear: 'Số sàn',
+                    engine: '110cc',
+                    color: 'Đỏ, Xanh, Bạc',
+                    basePrice: '130.000đ',
+                    insuranceFee: '25.000đ',
+                    serviceFee: '20.000đ',
+                    totalPrice: '175.000đ',
+                    mainImage: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                }
+            };
+            
+            const data = vehicleData[vehicleId];
+            if (data) {
+                document.getElementById('modalVehicleName').textContent = data.name;
+                document.getElementById('vehicleSpecType').textContent = data.type;
+                document.getElementById('vehicleSpecFuel').textContent = data.fuel;
+                document.getElementById('vehicleSpecSeats').textContent = data.seats;
+                document.getElementById('vehicleSpecGear').textContent = data.gear;
+                document.getElementById('vehicleSpecEngine').textContent = data.engine;
+                document.getElementById('vehicleSpecColor').textContent = data.color;
+                document.getElementById('vehicleBasePrice').textContent = data.basePrice;
+                document.getElementById('vehicleInsuranceFee').textContent = data.insuranceFee;
+                document.getElementById('vehicleServiceFee').textContent = data.serviceFee;
+                document.getElementById('vehicleTotalPrice').textContent = data.totalPrice;
+                document.getElementById('vehicleMainImage').src = data.mainImage;
+            }
+        }
+        
+        function changeMainImage(src) {
+            document.getElementById('vehicleMainImage').src = src;
+        }
+        
+        function playVideo(video) {
+            const mainImage = document.getElementById('vehicleMainImage');
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'vehicle-main-image';
+            videoContainer.innerHTML = `
+                <video controls autoplay style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px;">
+                    <source src="${video.querySelector('source').src}" type="video/mp4">
+                </video>
+            `;
+            mainImage.parentNode.replaceChild(videoContainer, mainImage);
+        }
+        
+        closeVehicleModal.addEventListener('click', () => {
+            vehicleModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === vehicleModal) {
+                vehicleModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
@@ -1401,13 +1884,13 @@
         // Rating functionality
         let currentRating = 0;
         
-        document.querySelectorAll('.rating-star').forEach(star => {
+        document.querySelectorAll('.rating-star-input').forEach(star => {
             star.addEventListener('click', function() {
                 const rating = parseInt(this.getAttribute('data-rating'));
                 currentRating = rating;
                 
                 // Update stars
-                document.querySelectorAll('.rating-star').forEach(s => {
+                document.querySelectorAll('.rating-star-input').forEach(s => {
                     const sRating = parseInt(s.getAttribute('data-rating'));
                     if (sRating <= rating) {
                         s.classList.add('active');
@@ -1420,7 +1903,7 @@
             star.addEventListener('mouseover', function() {
                 const rating = parseInt(this.getAttribute('data-rating'));
                 
-                document.querySelectorAll('.rating-star').forEach(s => {
+                document.querySelectorAll('.rating-star-input').forEach(s => {
                     const sRating = parseInt(s.getAttribute('data-rating'));
                     if (sRating <= rating) {
                         s.style.color = 'var(--warning)';
@@ -1431,7 +1914,7 @@
             });
             
             star.addEventListener('mouseout', function() {
-                document.querySelectorAll('.rating-star').forEach(s => {
+                document.querySelectorAll('.rating-star-input').forEach(s => {
                     const sRating = parseInt(s.getAttribute('data-rating'));
                     if (sRating <= currentRating) {
                         s.style.color = 'var(--warning)';
